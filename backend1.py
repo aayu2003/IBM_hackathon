@@ -2,9 +2,18 @@ from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
+
 import os
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allows all headers
+)
 # Custom OpenAPI schema function
 def custom_openapi():
     if not app.openapi_schema:
