@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard with Popups</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Dark Gradient Background with Animation */
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #ffffff;
+            background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #53354a);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+            margin: 0;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* Moving Gradient Animation */
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Container Styling */
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 30px;
+            width: 95%;
+            max-width: 900px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin: 50px auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        /* Grid Layout for Dashboard Sections */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 50px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            text-align: center;
+            color: white; /* Set text color to white */
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card h2 {
+            margin-bottom: 15px;
+        }
+
+        /* Popup Modal Styling */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 10;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #222;
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+            color: #f05454;
+        }
+
+        .close-btn, .create-btn {
+            background: #f05454;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .close-btn:hover, .create-btn:hover {
+            background: #d94343;
+        }
+
+        /* Input Field Styling */
+        .input-field {
+            margin: 10px 0;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .file-upload {
+            margin: 20px 0;
+        }
+
+        .file-upload label {
+            background: #f05454;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .file-upload label:hover {
+            background: #d94343;
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .instruction {
+            font-size: 14px;
+            color: #cccccc;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Dashboard Container -->
+<div class="container">
+    <h1>Dashboard</h1>
+
+    <!-- Grid Layout for Dashboard Sections -->
+    <div class="grid-container">
+        <div class="card" onclick="showPopup('internGroup')">
+            <h2>Intern Group</h2>
+            <p>View and manage intern groups</p>
+        </div>
+        
+        <div class="card" onclick="redirect('/salary_page')">
+            <h2>Salary</h2>
+            <p>View and manage salary details</p>
+        </div>
+
+        <div class="card" onclick="showPopup('courseCreator')">
+            <h2>Course Creator</h2>
+            <p>Create and manage courses</p>
+        </div>
+
+        <div class="card" onclick="showPopup('marketingCampaign')">
+            <h2>Marketing Campaign</h2>
+            <p>Generate and manage marketing campaigns</p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Popup -->
+<div class="modal" id="popupModal">
+    <div class="modal-content">
+        <h2 id="popupTitle"></h2>
+        <p id="popupDescription"></p>
+        
+        <!-- Marketing Campaign Content -->
+        <div id="marketingContent" style="display: none;">
+            <div class="file-upload">
+                <label for="fileInput">Upload CSV File</label>
+                <input type="file" id="fileInput" accept=".csv">
+            </div>
+        </div>
+
+        <!-- Course Creator Content -->
+        <div id="courseCreatorContent" style="display: none;">
+            <input type="text" class="input-field" id="courseName" placeholder="Enter Course Name">
+            <div class="file-upload">
+                <label for="courseFileInput">Upload CSV File</label>
+                <input type="file" id="courseFileInput" accept=".csv">
+            </div>
+            <div class="instruction">
+                Please ensure the CSV file contains all necessary course details.
+            </div>
+            <button class="create-btn" onclick="createCourse()">Create</button>
+        </div>
+
+        <button class="close-btn" onclick="closePopup()">Close</button>
+    </div>
+</div>
+
+<script>
+    function redirect(path) {
+        window.location.href = path;
+    }
+
+    function showPopup(type) {
+        const modal = document.getElementById('popupModal');
+        const title = document.getElementById('popupTitle');
+        const description = document.getElementById('popupDescription');
+        const marketingContent = document.getElementById('marketingContent');
+        const courseCreatorContent = document.getElementById('courseCreatorContent');
+        
+        // Reset Content
+        marketingContent.style.display = 'none';
+        courseCreatorContent.style.display = 'none';
+
+        const content = {
+            internGroup: { title: 'Intern Group', description: 'Manage all intern groups here.' },
+            payroll: { title: 'Salary', description: 'Manage payroll and salary details.' },
+            marketingCampaign: { title: 'Marketing Campaign', description: 'Generate marketing campaigns.', showMarketing: true },
+            courseCreator: { title: 'Course Creator', description: 'Create a new course.', showCourseCreator: true }
+        };
+
+        if (content[type]) {
+            title.textContent = content[type].title;
+            description.textContent = content[type].description;
+            if (content[type].showMarketing) marketingContent.style.display = 'block';
+            if (content[type].showCourseCreator) courseCreatorContent.style.display = 'block';
+        }
+
+        modal.style.display = 'flex';
+    }
+
+    function closePopup() {
+        document.getElementById('popupModal').style.display = 'none';
+    }
+
+    function createCourse() {
+        const courseName = document.getElementById('courseName').value;
+        const courseFile = document.getElementById('courseFileInput').files[0];
+
+        if (!courseName || !courseFile) {
+            alert('Please provide both the course name and CSV file.');
+            return;
+        }
+
+        alert(`Course "${courseName}" created successfully!`);
+    }
+    function createCourse() {
+        const courseName = document.getElementById('courseName').value;
+        const courseFile = document.getElementById('courseFileInput').files[0];
+    
+        if (!courseName || !courseFile) {
+            alert('Please provide both the course name and CSV file.');
+            return;
+        }
+    
+        // Prepare the FormData object
+        const formData = new FormData();
+        formData.append('course_name', courseName);
+        formData.append('file', courseFile);
+    
+        // Send POST request to /course_creator API
+        fetch('/course_creator', {
+            method: 'POST',
+            body: formData,
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    alert(`Course "${courseName}" created successfully!`);
+                } else {
+                    alert(`Failed to create course: ${data.message}`);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('An error occurred while creating the course.');
+            });
+    }
+    function submitCourseCreator() {
+        const courseName = document.getElementById('courseNameInput').value;
+        const courseFile = document.getElementById('courseFileInput').files[0];
+    
+        if (!courseName || !courseFile) {
+            alert('Please enter the course name and upload a CSV file.');
+            return;
+        }
+    
+        // Prepare FormData with the file and course name
+        const formData = new FormData();
+        formData.append('course_name', courseName);
+        formData.append('file', courseFile);
+    
+        // Send POST request to /course_creator API
+        fetch('/course_creator', {
+            method: 'POST',
+            body: formData,
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    // Display the API response
+                    document.getElementById('dialogContent').innerHTML = `<p>${data.response}</p>`;
+                } else {
+                    alert(`Failed to create course: ${data.message}`);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('An error occurred while creating the course.');
+            });
+    }
+    
+</script>
+
+</body>
+</html>
