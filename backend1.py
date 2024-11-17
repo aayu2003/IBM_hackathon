@@ -76,15 +76,12 @@ app.openapi = custom_openapi
 
 # Route to accept user_id and password
 @app.post("/login/")
-async def login(user_id: str, password: str):
+async def login(user_id: str):
     """
     Login endpoint that takes a user ID and password.
     """
-    if user_id == "admin" and password == "secret":
-        html_path = os.path.join(os.getcwd(), "dashboard.html")
-        with open(html_path, "r") as file:
-            html_content = file.read()
-            return HTMLResponse(content=html_content)
+    if user_id == "admin":
+        return HTMLResponse(content=open("dashboard.html", "r").read())
     else:
         
         return {"status": "error", "message": "Invalid credentials"}
