@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Reuse styles from the previous design */
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #ffffff;
+            background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #53354a);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+            margin: 0;
+            overflow-y: auto;
+        }
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 800px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin: 50px auto;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table th, table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        table th {
+            background-color: #33334d;
+            color: #ffffff;
+        }
+        table td {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .pay-btn {
+            background-color: #f05454;
+            color: #fff;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .pay-btn:hover {
+            background-color: #d94343;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Salary Management</h1>
+        <table id="salaryTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Work Hours</th>
+                    <th>Estimated Salary</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically populated -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Function to fetch worker numbers and populate the table
+        async function fetchWorkerData() {
+            try {
+                const response = await fetch('/worker_data'); // Fetch data from the new endpoint
+                const workers = await response.json(); // Parse JSON response
+        
+                const tableBody = document.getElementById('salaryTable').querySelector('tbody');
+        
+                // Clear any existing rows in the table
+                tableBody.innerHTML = '';
+        
+                // Iterate through workers and dynamically generate table rows
+                workers.forEach((worker, index) => {
+                    const row = document.createElement('tr');
+        
+                    row.innerHTML = `
+                        <td>${worker.Name || `Worker ${index + 1}`}</td>
+                        <td>${worker.Department || 'N/A'}</td>
+                        <td>${worker['Work Hours'] || worker['Work hour'] || 'N/A'} hrs</td>
+                        <td>$${worker.Estimate?.toLocaleString() || 'N/A'}</td>
+                        <td><button class="pay-btn" onclick="payWorker('${worker.Name || index + 1}')">Pay</button></td>
+                    `;
+        
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to load worker data');
+            }
+        }
+        
+        function payWorker(workerName) {
+            alert(`Paying ${workerName}`);
+        }
+        
+        // Call fetchWorkerData when the page loads
+        document.addEventListener('DOMContentLoaded', fetchWorkerData);
+        
+        
+
+        // Function to handle the Pay button click
+        function payWorker(workerId) {
+            alert(`Payment processed for Worker ${workerId}`);
+        }
+
+        // Load worker data on page load
+        document.addEventListener('DOMContentLoaded', fetchWorkerData);
+    </script>
+</body>
+</html>
