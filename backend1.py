@@ -86,7 +86,7 @@ async def login(user_id: str, password: str):
             html_content = file.read()
             return HTMLResponse(content=html_content)
     else:
-        print("hogyisssss")
+        
         return {"status": "error", "message": "Invalid credentials"}
     
 
