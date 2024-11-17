@@ -99,18 +99,12 @@ async def serve_html():
 
 @app.get("/salary_page", response_class=HTMLResponse)
 async def serve_html():
-    html_path = os.path.join(os.getcwd(), "salary.html")
-    with open(html_path, "r") as file:
-        html_content = file.read()
-    return HTMLResponse(content=html_content)
+    return HTMLResponse(content=open("salary.html", "r").read())
 
 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def serve_html():
-    html_path = os.path.join(os.getcwd(), "dashboard.html")
-    with open(html_path, "r") as file:
-        html_content = file.read()
-    return HTMLResponse(content=html_content)
+    return HTMLResponse(content=open("dashboard.html", "r").read())
 
 @app.get("/worker_data", response_class=JSONResponse)
 async def worker_data():
